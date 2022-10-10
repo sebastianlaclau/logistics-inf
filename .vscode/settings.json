@@ -1,0 +1,7 @@
+{
+    "[javascriptreact]": {
+        "editor.formatOnSave": true
+    },
+    "editor.detectIndentation": true,
+    "editor.autoIndent": "keep"
+}
