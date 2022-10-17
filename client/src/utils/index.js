@@ -48,19 +48,6 @@ export const statusesSettings = {
     'completed': { status: true, color: '#f0f4c3' },
 };
 
-export const replaceCharacters = (string) => {
-    return string
-        .replaceAll('</a>', '')
-        .replaceAll('<li>', '')
-        .replaceAll('</li>', '')
-        .replaceAll('<p>', '')
-        .replaceAll('</p>', '')
-        .replaceAll('<ul>', '')
-        .replaceAll('</ul>', '')
-        .replaceAll(':', '.')
-        .replaceAll(/ *\<[^)]*\> */g, '');
-};
-
 export const longFormatDate = (date) =>
     new Date(date).toLocaleDateString('ES', {
         day: 'numeric',

@@ -3,16 +3,19 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { getOrders } from '../api/Api';
-import PaginationApp from './PaginationApp';
-import DateSelectionModal from './DatesSelectionModal';
-import StatusesChips from './StatusChipsFilter';
+import PaginationApp from '../components/PaginationApp';
+import DateSelectionModal from '../components/DatesSelectionModal';
+import StatusesChips from '../components/StatusChipsFilter';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import IconButton from '@mui/material/IconButton';
-import LinearProgress from '@mui/material/LinearProgress';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import OrderSummaryCard from '../components/OrderSummaryCard';
-import { firstOrderDate, statusesSettings, paymentMethodsSettings } from '../utils';
+import { firstOrderDate, statusesSettings } from '../utils';
+import { useDebounce } from 'use-debounce';
+import CircularProgress from '@mui/material/CircularProgress';
+
+// 120392 order with many mobbex records
 
 function OrdersListPage({ onLogout }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +28,8 @@ function OrdersListPage({ onLogout }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [per_page, setPer_page] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearchTerm] = useDebounce(searchTerm, 1000);
+
     //const [uno, setUno] = useState(1);
     //const [dos, setDos] = useState(2);
     //const [tres, setTres] = useState(3);
@@ -76,7 +81,7 @@ function OrdersListPage({ onLogout }) {
         setStatusesToFetch(statusesSettings);
         updateOrders();
         updateTotalPages();
-    }, [sinceDate, untilDate, per_page, searchTerm]);
+    }, [sinceDate, untilDate, per_page, debouncedSearchTerm]);
 
     useEffect(() => {
         //console.log('entro en el effect de currentPage');
@@ -133,7 +138,7 @@ function OrdersListPage({ onLogout }) {
                             </Grid>
                             <Grid container sx={{ mt: 3, mb: 4 }} justifyContent={'center'}>
                                 <Paper sx={{ p: '2px 4px', display: 'flex', width: '50%' }}>
-                                    <InputBase value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} sx={{ ml: 1, flex: 1 }} placeholder="Search puto..." inputProps={{ 'aria-label': 'search...' }} />
+                                    <InputBase value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} sx={{ ml: 1, flex: 1 }} placeholder="Search..." inputProps={{ 'aria-label': 'search...' }} />
                                     <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                                         <SearchIcon />
                                     </IconButton>
@@ -146,13 +151,8 @@ function OrdersListPage({ onLogout }) {
                         </Grid>
                         <Grid item alignItems={'center'} justifyContent={'center'}>
                             {isLoading ? (
-                                <Box
-                                    sx={{
-                                        width: '90%',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <LinearProgress />
+                                <Box sx={{ width: '100%', height: '100vh', justifyContent: 'center' }}>
+                                    <CircularProgress style={{ position: 'relative', top: '30%', left: '50%' }} />
                                 </Box>
                             ) : (
                                 <>

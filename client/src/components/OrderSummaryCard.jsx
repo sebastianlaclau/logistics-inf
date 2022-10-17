@@ -39,7 +39,7 @@ function OrderSummaryCard(props) {
                             {orderDetailsSetting(order)
                                 .filter((i) => i.seenInSummary)
                                 .map((item, i) => {
-                                    console.log(item);
+                                    // console.log(item);
                                     return (
                                         <Grid key={i} item xs={12} md={6} lg={4}>
                                             <Stack direction={'row'} alignItems={'center'}>

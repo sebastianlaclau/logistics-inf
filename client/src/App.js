@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Login from './components/Login';
-import OrdersListPage from './components/OrdersListPage'
-import SingleOrderPage from './components/SingleOrderPage';
-import Layout from './components/Layout';
+import Login from './containers/Login';
+import OrdersListPage from './containers/OrdersListPage'
+import SingleOrderPage from './containers/SingleOrderPage';
+import Layout from './containers/Layout';
 
 function App() {
     const [isUserSignedIn, setIsUserSignedIn] = useState(false);

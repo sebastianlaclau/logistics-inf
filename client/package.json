@@ -19,6 +19,7 @@
         "axios": "^0.27.2",
         "bootstrap": "^4.6.2",
         "google-map-react": "^2.2.0",
+        "html-react-parser": "^3.0.4",
         "moment": "^2.29.4",
         "react": "^17.0.2",
         "react-bootstrap": "^1.6.5",
@@ -27,6 +28,7 @@
         "react-router-dom": "^6.3.0",
         "react-scripts": "^2.1.8",
         "recharts": "^2.1.14",
+        "use-debounce": "^8.0.4",
         "web-vitals": "^1.0.1"
     },
     "scripts": {
