@@ -20,7 +20,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import Mobbex from '../assets/mobbex.png';
 import Prisma from '../assets/prisma.png';
 
-import { setAsTitleCase, shortFormatDate, shortFormatDateAndTime } from './functions';
+import { setAsTitleCase, shortFormatDate } from './functions';
 import { statesDict } from './constants';
 
 

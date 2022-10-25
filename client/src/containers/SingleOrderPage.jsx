@@ -49,11 +49,8 @@ const SingleOrderPage = () => {
         }
         setMobbexIsLoading(false);
         const shipnowData = await getShipnowOrderData(id);
-        console.log({ shipnowData });
         const shipnowSteps = filtersShipnowTimestamps(shipnowData[0].timestamps);
-        console.log({ shipnowSteps });
         setShipnowSteps(shipnowSteps);
-        console.log({ shipnowSteps });
         const completedSteps = shipnowSteps.map((i) => i[1]).indexOf('...') > -1 ? shipnowSteps.indexOf(shipnowSteps.find((i) => i[1] === '...')) - 1 : shipnowSteps.length - 1;
         setActiveStep(completedSteps);
         setShipnowIsLoading(false);
