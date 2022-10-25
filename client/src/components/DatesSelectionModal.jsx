@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import PropTypes from 'prop-types';
+
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -17,7 +18,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { shortFormatDate } from '../utils';
+import { shortFormatDate } from '../utils/functions';
 
 function ConfirmationDialogRaw(props) {
     const { onClose, open, untilDate: until, sinceDate: since } = props;

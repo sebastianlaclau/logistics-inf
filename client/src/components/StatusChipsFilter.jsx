@@ -1,35 +1,29 @@
 import * as React from 'react';
-import Chip from '@mui/material/Chip';
+
 import Grid from '@mui/material/Grid';
+import Chip from '@mui/material/Chip';
 
 function StatusChipsFilter(props) {
-    const { statusesToFetch, setStatusesToFetch } = props;
+    const { statusToFetch, setStatusToFetch } = props;
 
     const handleClick = (name) => {
-        setStatusesToFetch({
-            ...statusesToFetch,
+        setStatusToFetch({
+            ...statusToFetch,
             [name]: {
-                ...statusesToFetch[name],
-                status: !statusesToFetch[name]['status'],
+                ...statusToFetch[name],
+                status: !statusToFetch[name]['status'],
             },
         });
     };
 
     return (
         <>
-            {Object.keys(statusesToFetch)
-                .filter((item) => statusesToFetch[item].status)
+            {Object.keys(statusToFetch)
+                .filter((item) => statusToFetch[item].status)
                 .map((status) => {
                     return (
                         <Grid item key={status}>
-                            <Chip
-                                label={status}
-                                key={status}
-                                onDelete={() => handleClick(status)}
-                                variant={'filled'}
-                                sx={{ bgcolor: statusesToFetch[status].color }}
-                                /* size="small" */
-                            />
+                            <Chip label={status} key={status} onDelete={() => handleClick(status)} variant={'filled'} sx={{ bgcolor: statusToFetch[status].color }} />
                         </Grid>
                     );
                 })}

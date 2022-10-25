@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -8,11 +9,11 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
-import { orderDetailsSetting, statusesSettings } from '../utils';
+
+import { orderDetailSetting, statusSettings } from '../utils/fieldSettings';
 
 function OrderSummaryCard(props) {
     const { order } = props;
-
     return (
         <>
             <Grid item width={'95%'}>
@@ -30,16 +31,15 @@ function OrderSummaryCard(props) {
 
                             <Grid item xs={12} md={3} pr={2}>
                                 <Stack direction="row" justifyContent="end">
-                                    <Chip label={order.status} key={order.status} variant={'filled'} sx={{ bgcolor: statusesSettings[order.status].color, ml: 3 }} />
+                                    <Chip label={order.status} key={order.status} variant={'filled'} sx={{ bgcolor: statusSettings[order.status].color, ml: 3 }} />
                                 </Stack>
                             </Grid>
                         </Grid>
 
                         <Grid container pt={3} px={3}>
-                            {orderDetailsSetting(order)
+                            {orderDetailSetting(order)
                                 .filter((i) => i.seenInSummary)
                                 .map((item, i) => {
-                                    // console.log(item);
                                     return (
                                         <Grid key={i} item xs={12} md={6} lg={4}>
                                             <Stack direction={'row'} alignItems={'center'}>

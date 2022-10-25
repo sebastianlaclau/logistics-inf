@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -7,9 +9,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import LogoInfanti from '../assets/logo-infanti.png';
 import Stack from '@mui/material/Stack';
-import { Link } from 'react-router-dom';
+
+import LogoInfanti from '../assets/logo-infanti.png';
 
 const mdTheme = createTheme();
 
@@ -25,7 +27,7 @@ export default function Layout({ children, onLogout, isUserSignedIn }) {
                                 <Link to="/">
                                     <Box component="img" sx={{ height: 40 }} alt="Infanti" src={LogoInfanti} pt={1} href="/"></Box>
                                 </Link>
-                                <Button href="#" variant="outlined" sx={{ my: 1, /* mx: 1.5 */ mr: 1.5 }} onClick={onLogout} size={'small'}>
+                                <Button href="#" variant="outlined" sx={{ my: 1, mr: 1.5 }} onClick={onLogout} size={'small'}>
                                     {isUserSignedIn ? 'Logout' : 'Login'}
                                 </Button>
                             </Stack>

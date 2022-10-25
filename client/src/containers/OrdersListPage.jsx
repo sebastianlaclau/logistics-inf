@@ -1,131 +1,82 @@
 import React, { useState, useEffect } from 'react';
+
+import { useDebounce } from 'use-debounce';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { getOrders } from '../api/Api';
-import PaginationApp from '../components/PaginationApp';
-import DateSelectionModal from '../components/DatesSelectionModal';
-import StatusesChips from '../components/StatusChipsFilter';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
-import OrderSummaryCard from '../components/OrderSummaryCard';
-import { firstOrderDate, statusesSettings } from '../utils';
-import { useDebounce } from 'use-debounce';
 import CircularProgress from '@mui/material/CircularProgress';
 
-// 120392 order with many mobbex records
+import RefreshIcon from '@mui/icons-material/Refresh';
+import SearchIcon from '@mui/icons-material/Search';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+
+import OrderSummaryCard from '../components/OrderSummaryCard';
+import StatusChips from '../components/StatusChipsFilter';
+import DateSelectionModal from '../components/DatesSelectionModal';
+import PaginationApp from '../components/PaginationApp';
+
+import { getOrders } from '../api/Api';
+
+import { statusSettings } from '../utils/fieldSettings';
+import { firstOrderDate } from '../utils/constants';
 
 function OrdersListPage({ onLogout }) {
     const [isLoading, setIsLoading] = useState(false);
     const [orders, setOrders] = useState([]);
-    const [totalOrdersCount, setTotalOrdersCount] = useState(null);
     const [sinceDate, setSinceDate] = useState(firstOrderDate);
     const [untilDate, setUntilDate] = useState(new Date());
-    const [statusesToFetch, setStatusesToFetch] = useState(statusesSettings);
+    const [statusToFetch, setStatusToFetch] = useState(statusSettings);
     const [pagesCount, setPagesCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [per_page, setPer_page] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm] = useDebounce(searchTerm, 1000);
 
-    //const [uno, setUno] = useState(1);
-    //const [dos, setDos] = useState(2);
-    //const [tres, setTres] = useState(3);
-    //const [cuatro, setCuatro] = useState(4);
-    //const [cinco, setCinco] = useState(5);
-    //const [pagination, setPagination] = useState(firstPaginationStatus);
-    //console.log({ sinceDate, untilDate, pagination, statusesToFetch });
-
     const updateOrders = async () => {
-        //console.log('hizo un updateOrders');
         setIsLoading(true);
-        const activeStatuses = Object.keys(statusesToFetch).filter((status) => statusesToFetch[status].status);
-        //console.log({ pagination });
-        //const { page, per_page, count } = pagination;
-        const { orders, totalOrdersCount } = await getOrders(sinceDate, untilDate, activeStatuses, currentPage, per_page, searchTerm);
-        //const { orders, totalOrdersCount } = response;
+        const activeStatus = Object.keys(statusToFetch).filter((status) => statusToFetch[status].status);
+        const { orders, totalOrdersCount } = await getOrders(sinceDate, untilDate, activeStatus, currentPage, per_page, searchTerm);
         setOrders(orders);
-        console.log({ orders });
-        setTotalOrdersCount(totalOrdersCount);
+        setPagesCount(Math.ceil(totalOrdersCount / per_page));
         setIsLoading(false);
     };
 
-    const updateTotalPages = () => {
-        setPagesCount(Math.ceil(totalOrdersCount / per_page));
-    };
-
-    /*
     useEffect(() => {
-        console.log('se activo el effect 1');
-        setDos(22);
-    }, [uno]);
-    useEffect(() => {
-        console.log('se activo el effect 2');
-        setTres(33);
-    }, [dos]);
-    useEffect(() => {
-        console.log('se activo el effect 3');
-        setUno(11);
-    }, [tres]);
-    useEffect(() => {
-        console.log('se activo el effect 4');
-        setTres(33);
-    }, [cuatro]);
-*/
-
-    useEffect(() => {
-        //console.log('entro en el effect de since, update y perpage');
-        setCurrentPage(1);
-        setStatusesToFetch(statusesSettings);
         updateOrders();
-        updateTotalPages();
-    }, [sinceDate, untilDate, per_page, debouncedSearchTerm]);
-
-    useEffect(() => {
-        //console.log('entro en el effect de currentPage');
-        updateOrders();
-        updateTotalPages();
     }, [currentPage]);
 
     useEffect(() => {
-        //console.log('entro en el effect de statusesToFetch');
         setCurrentPage(1);
         updateOrders();
-        updateTotalPages();
-    }, [statusesToFetch]);
+    }, [statusToFetch]);
 
     useEffect(() => {
-        //console.log('entro en el effect de totalOrdersCount y perpage');
-        setPagesCount(Math.ceil(totalOrdersCount / per_page));
-    }, [totalOrdersCount, per_page]);
-
-    //    useEffect(() => console.log({ searchTerm }), [searchTerm]);
-
-    const refreshDashboard = () => {
         setCurrentPage(1);
-        setStatusesToFetch(statusesSettings);
+        setStatusToFetch(statusSettings);
         updateOrders();
-    };
-
-    const removeSpecificOrder = (number) => {
-        const updatedOrders = orders.filter((item) => item.number !== number);
-        setOrders(updatedOrders);
-    };
+    }, [sinceDate, untilDate, per_page, debouncedSearchTerm]);
 
     const handlePageChange = (_, page) => {
         setCurrentPage(page);
     };
 
+    const refreshDashboard = () => {
+        setCurrentPage(1);
+        setStatusToFetch(statusSettings);
+        setSinceDate(firstOrderDate);
+        setUntilDate(new Date());
+        setSearchTerm('');
+        updateOrders();
+    };
+
     return (
         <>
             <Grid container spacing={3}>
-                {/* ORDERS LIST  */}
                 <Grid item xs={12} pl={3}>
                     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                         <Grid container sx={{ alignItems: 'center' }}>
-                            {/* HEADER */}
                             <Grid container justifyContent={'space-between'}>
                                 <Grid item xs={12} md="auto" sx={{ ml: '3%', mt: 3, mb: 5 }}>
                                     <DateSelectionModal sinceDate={sinceDate} untilDate={untilDate} setUntilDate={setUntilDate} setSinceDate={setSinceDate} />
@@ -144,9 +95,8 @@ function OrdersListPage({ onLogout }) {
                                     </IconButton>
                                 </Paper>
                             </Grid>
-                            {/* STATUS CHIPS */}
                             <Grid sx={{ pb: 2, pl: 3, pt: 2, mt: 2 }} container columnSpacing={1} rowSpacing={1} justifyContent={'center'} alignItems="center">
-                                <StatusesChips statusesSettings={statusesSettings} statusesToFetch={statusesToFetch} setStatusesToFetch={setStatusesToFetch} />
+                                <StatusChips statusSettings={statusSettings} statusToFetch={statusToFetch} setStatusToFetch={setStatusToFetch} />
                             </Grid>
                         </Grid>
                         <Grid item alignItems={'center'} justifyContent={'center'}>
@@ -158,14 +108,13 @@ function OrdersListPage({ onLogout }) {
                                 <>
                                     <Grid container rowSpacing={2} mt={2} justifyContent={'center'}>
                                         {orders.length > 0 ? (
-                                            orders.map((order, i) => <OrderSummaryCard key={i} order={order} removeSpecificOrder={removeSpecificOrder} statusesSettings={statusesSettings} />)
+                                            orders.map((order, i) => <OrderSummaryCard key={i} order={order} statusSettings={statusSettings} />)
                                         ) : (
                                             <div className="row pt-4">
                                                 <h6>No orders</h6>
                                             </div>
                                         )}
                                     </Grid>
-
                                     <PaginationApp pagesCount={pagesCount} currentPage={currentPage} handlePageChange={handlePageChange} />
                                 </>
                             )}

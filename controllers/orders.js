@@ -1,5 +1,5 @@
-const fetch = require("cross-fetch")
 const { response } = require("express")
+const fetch = require("cross-fetch")
 var axios = require("axios")
 var qs = require("qs")
 var base64 = require("base-64")
@@ -52,8 +52,10 @@ const getOrders = async (req, res = response) => {
 }
 
 const getSpecificOrder = async (req, res = response) => {
+
     const url = `${process.env.REACT_APP_WOO_ORDERS_URL}${req.params.id}?
     consumer_key=${process.env.REACT_APP_WOO_KEY}&consumer_secret=${process.env.REACT_APP_WOO_SECRET}`
+
     const woo_options = {
         method: "GET",
         headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
@@ -75,7 +77,6 @@ const getSpecificOrder = async (req, res = response) => {
             order.line_items[item].product_data = product_data
         }
 
-        console.log(order)
         res.send(order)
     } catch (e) {
         console.log(e)
@@ -83,6 +84,7 @@ const getSpecificOrder = async (req, res = response) => {
 }
 
 const getProductData = async (product) => {
+
     const url = `${process.env.REACT_APP_WOO_PRODUCTS_URL}${product}?
     consumer_key=${process.env.REACT_APP_WOO_KEY}&consumer_secret=${process.env.REACT_APP_WOO_SECRET}`
 
@@ -100,7 +102,9 @@ const getProductData = async (product) => {
         }
 
         const product = await data.json()
+
         return product
+    
     } catch (e) {
         console.log(e)
     }
@@ -109,7 +113,9 @@ const getProductData = async (product) => {
 // MOBBEX 
 
 const getMobbexOrderData = async (req, res) => {
+
     const fetchingOptions = {
+
         redirect: "follow",
         method: "GET",
         headers: {
@@ -118,22 +124,29 @@ const getMobbexOrderData = async (req, res) => {
             "x-api-key": process.env.REACT_APP_MOB_K,
             "x-access-token": process.env.REACT_APP_MOB_S,
         },
+
     }
 
     const url = `${process.env.REACT_APP_MOB_URL}/coupons/${req.params.id}`
 
     try {
+
         const response = await fetch(url, fetchingOptions)
         const text = await response.text()
+        
         const data = JSON.parse(text).data
+        
         const mobbexInfo = {}
 
         const attempts = data.length
 
         for (let attempt in data) {
+        
             const number = data[attempt].id
             const status = data[attempt].status
+        
             let riskInfo = await getTransactionRisk(number)
+        
             mobbexInfo[number] = {}
             mobbexInfo[number].status = status
             mobbexInfo[number].riskInfo = riskInfo
@@ -147,11 +160,11 @@ const getMobbexOrderData = async (req, res) => {
 }
 
 async function getTransactionRisk(id) {
-    const data = qs.stringify({
-        id,
-    })
+
+    const data = qs.stringify({ id })
 
     const config = {
+        
         method: "post",
         url: "https://api.mobbex.com/2.0/transactions/status",
         headers: {
@@ -164,9 +177,11 @@ async function getTransactionRisk(id) {
     }
 
     try {
+
         const response = await axios(config)
-        const data = response.data
-        return data
+    
+        return response.data
+    
     } catch (e) {
         console.log(e)
     }
@@ -181,16 +196,20 @@ async function getShipnowData(req, res) {
             Authorization: "Token token=" + process.env.REACT_APP_SHIPNOW_TOKEN,
         },
     }
+
     const url = "https://api.shipnow.com.ar/orders?external_reference=" + req.params.id
+    
     try {
         const response = await fetch(url, options)
 
         if (response.status >= 400) {
             throw new Error("Bad response from server")
         }
+    
         const { results } = await response.json()
         
         res.send(results)
+    
     } catch (e) {
         console.log(e)
     }

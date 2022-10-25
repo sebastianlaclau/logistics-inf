@@ -13,16 +13,16 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 
-function Login({ onLoginSuccessful }) {
+function LoginPage({ onLoginSuccessful }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hasError, setHasError] = useState(false);
 
-    const onEmailChange = (event) => setEmail(event.target.value);
-    const onPasswordChange = (event) => setPassword(event.target.value);
+    const onEmailChange = (e) => setEmail(e.target.value);
+    const onPasswordChange = (e) => setPassword(e.target.value);
 
-    const onSubmit = async (event) => {
-        event.preventDefault();
+    const onSubmit = async (e) => {
+        e.preventDefault();
         setHasError(false);
         const loginResult = await login({ email, password });
         if (!loginResult) setHasError(true);
@@ -43,18 +43,18 @@ function Login({ onLoginSuccessful }) {
                         Login
                     </Typography>
                     <FormControl sx={{ minWidth: '90%', mb: 3 }}>
-                        <InputLabel>Email address</InputLabel>
+                        <InputLabel>Email</InputLabel>
                         <Input type="email" placeholder="Enter email" onChange={onEmailChange} value={email} />
-                        <FormHelperText>We'll never share your email.</FormHelperText>
+                        <FormHelperText>No compartiremos su email con nadie.</FormHelperText>
                     </FormControl>{' '}
                     <FormControl sx={{ minWidth: '90%', mb: 3 }}>
-                        <InputLabel>Password</InputLabel>
+                        <InputLabel>Clave</InputLabel>
                         <Input type="password" placeholder="Password" onChange={onPasswordChange} value={password} />
                     </FormControl>
-                    {hasError && <Alert variant={'danger'}>The email address and password you entered don't match any account. Please try again.</Alert>}
+                    {hasError && <Alert variant={'danger'}>El email y clave ingresados no coinciden. Por favor inténtelo nuevamente.</Alert>}
                     <Box width="100%" mt={2}>
                         <Button type="submit" onClick={onSubmit}>
-                            Submit
+                            Enviar
                         </Button>
                     </Box>
                 </CardContent>
@@ -63,4 +63,4 @@ function Login({ onLoginSuccessful }) {
     );
 }
 
-export default Login;
+export default LoginPage;

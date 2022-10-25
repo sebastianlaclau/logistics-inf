@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Box, Pagination } from '@mui/material';
 
-const PaginationApp = (props) => {
+const PaginationApp = ({ pagesCount, currentPage, handlePageChange }) => {
     return (
         <Box justifyContent="center" alignItems="center" display="flex" sx={{ margin: '20px 0px' }}>
-            <Pagination count={props.pagesCount} page={props.currentPage} onChange={props.handlePageChange} />
+            <Pagination count={pagesCount} page={currentPage} onChange={handlePageChange} />
         </Box>
     );
 };

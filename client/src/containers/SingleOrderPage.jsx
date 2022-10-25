@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from 'react';
+
 import { useParams } from 'react-router-dom';
-import { getOrder, getMobbexOrderData, getShipnowOrderData } from '../api/Api';
-import { Grid } from '@material-ui/core';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Grid from '@material-ui/core/Grid';
 import Divider from '@mui/material/Divider';
-import { paymentMethodsSettings, settleAsTitleCase, longFormatDate, shortFormatDateAndTime, statusesSettings, orderDetailsSetting, filtersShipnowTimestamps } from '../utils';
-import shipnowLogo from '../assets/shipnow.png';
+import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
+
+import shipnowLogo from '../assets/shipnow.png';
+
 import MobbexRecordsTable from '../components/MobbexRecordsTable';
 import SingleProductDescription from '../components/SingleProductDescription';
 
-// two mobbex payment intents example 141882
-// order 134394 status completed, lists all shipnow steps but these are empty
+import { paymentMethodSettings, statusSettings, orderDetailSetting, filtersShipnowTimestamps } from '../utils/fieldSettings';
+import { setAsTitleCase, longFormatDate, shortFormatDateAndTime } from '../utils/functions';
+
+import { getOrder, getMobbexOrderData, getShipnowOrderData } from '../api/Api';
 
 const SingleOrderPage = () => {
-    const { id } = useParams();
     const [order, setOrder] = useState(null);
     const [orderIsLoading, setOrderIsLoading] = useState(true);
     const [mobbexIsLoading, setMobbexIsLoading] = useState(true);
@@ -31,26 +34,27 @@ const SingleOrderPage = () => {
     const [mobbexData, setMobbexData] = useState('');
     const [shipnowSteps, setShipnowSteps] = React.useState([]);
     const [activeStep, setActiveStep] = React.useState(0);
+    const { id } = useParams();
 
     useEffect(async () => {
         setOrderIsLoading(true);
         setMobbexIsLoading(true);
         setShipnowIsLoading(true);
         const order = await getOrder(id);
-        //console.log(order);
         setOrder(order);
         setOrderIsLoading(false);
-        if (paymentMethodsSettings[order.payment_method_title].title === 'Mobbex') {
+        if (paymentMethodSettings[order.payment_method_title].title === 'Mobbex') {
             const mobbexData = await getMobbexOrderData(id);
             setMobbexData(mobbexData);
         }
         setMobbexIsLoading(false);
         const shipnowData = await getShipnowOrderData(id);
+        console.log({ shipnowData });
         const shipnowSteps = filtersShipnowTimestamps(shipnowData[0].timestamps);
+        console.log({ shipnowSteps });
         setShipnowSteps(shipnowSteps);
+        console.log({ shipnowSteps });
         const completedSteps = shipnowSteps.map((i) => i[1]).indexOf('...') > -1 ? shipnowSteps.indexOf(shipnowSteps.find((i) => i[1] === '...')) - 1 : shipnowSteps.length - 1;
-        //console.log(shipnowSteps);
-        //console.log(completedSteps);
         setActiveStep(completedSteps);
         setShipnowIsLoading(false);
     }, []);
@@ -74,7 +78,7 @@ const SingleOrderPage = () => {
                                                     #{order.id}
                                                 </Typography>
                                                 <Typography mb={1} sx={{ fontSize: 14 }} color="text.secondary" gutterBottom style={{ display: 'inline' }}>
-                                                    {`${settleAsTitleCase(longFormatDate(order.date_created))}`}
+                                                    {`${setAsTitleCase(longFormatDate(order.date_created))}`}
                                                 </Typography>
                                             </Box>
                                         </Grid>
@@ -87,7 +91,7 @@ const SingleOrderPage = () => {
                                                         key={order.status}
                                                         variant={'filled'}
                                                         sx={{
-                                                            bgcolor: statusesSettings[order.status].color,
+                                                            bgcolor: statusSettings[order.status].color,
                                                             ml: 3,
                                                         }}
                                                     />
@@ -100,7 +104,7 @@ const SingleOrderPage = () => {
                                     </Box>
                                     <Box paddingY={5} paddingX={5} width={'100%'}>
                                         <Grid container>
-                                            {orderDetailsSetting(order)
+                                            {orderDetailSetting(order)
                                                 .filter((i) => i.section === 'Datos de contacto')
                                                 .map((detail, i) => {
                                                     return (
@@ -116,13 +120,12 @@ const SingleOrderPage = () => {
                                                 })}
                                         </Grid>
                                     </Box>
-                                    {/* PAYMENT SECTION */}
                                     <Box paddingY={5} paddingX={5} width={'100%'}>
                                         <Divider textAlign="left">Informacion del pago</Divider>
                                     </Box>
                                     <Box paddingY={5} paddingX={5} width={'100%'}>
                                         <Grid container pt={3} px={3}>
-                                            {orderDetailsSetting(order)
+                                            {orderDetailSetting(order)
                                                 .filter((i) => i.section === 'Informacion del pago')
                                                 .map((detail, i) => {
                                                     const logo = detail.logo;
@@ -152,13 +155,12 @@ const SingleOrderPage = () => {
                                         </Grid>
                                     </Box>
 
-                                    {/* LOGISTIC */}
                                     <Box paddingY={5} paddingX={5} width={'100%'}>
                                         <Divider textAlign="left">Informacion logistica</Divider>
                                     </Box>
                                     <Box paddingY={5} paddingX={5} width={'100%'}>
                                         <Grid container>
-                                            {orderDetailsSetting(order)
+                                            {orderDetailSetting(order)
                                                 .filter((i) => i.section === 'Informacion logistica')
                                                 .map((detail, i) => {
                                                     return (
@@ -178,32 +180,37 @@ const SingleOrderPage = () => {
                                                     <CircularProgress style={{ position: 'relative', top: '30%', left: '50%' }} />
                                                 </Box>
                                             ) : (
-                                                activeStep > 0 && (
-                                                    <>
-                                                        <Grid container>
-                                                            <Box my={5} ml={1} pt={0.5} pb={1} pr={4} pl={1} alignItems={'flex-end'} src={shipnowLogo} component={'img'} sx={{ height: 36.7 }} />
-                                                        </Grid>
-                                                        <Grid container justifyContent="center" mt={'1'} mb={'5'} sx={{ mt: '1', mb: '5' }}>
-                                                            <Grid item xs={12} md={6} lg={4} mt={'1'} sx={{ mt: '1' }}>
-                                                                <Box mt={1}>
+                                                <>
+                                                    <Grid container>
+                                                        <Box my={5} ml={1} pt={0.5} pb={1} pr={4} pl={1} alignItems={'flex-end'} src={shipnowLogo} component={'img'} sx={{ height: 36.7 }} />
+                                                    </Grid>
+                                                    <Grid container justifyContent="center" mt={'1'} mb={'5'} sx={{ mt: '1', mb: '5' }}>
+                                                        <Grid item xs={12} md={6} lg={4} mt={'1'} sx={{ mt: '1' }}>
+                                                            <Box mt={1}>
+                                                                {activeStep > 0 ? (
                                                                     <Stepper activeStep={activeStep} orientation="vertical">
                                                                         {shipnowSteps.map((step, index) => {
+                                                                            console.log({ step });
                                                                             return (
-                                                                                <Step key={index}>
+                                                                                <Step key={index} completed={step[1] !== '...' ? true : false}>
                                                                                     <StepLabel optional={new Date(step[1]) < new Date() ? <Typography variant="caption">{shortFormatDateAndTime(step[1])}</Typography> : '...'}>{step[0]}</StepLabel>
                                                                                 </Step>
                                                                             );
                                                                         })}
                                                                     </Stepper>
-                                                                </Box>
-                                                            </Grid>
+                                                                ) : (
+                                                                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                                                                        La orden aun no fue procesada por Shipnow.
+                                                                    </Typography>
+                                                                )}
+                                                            </Box>
                                                         </Grid>
-                                                    </>
-                                                )
+                                                    </Grid>
+                                                </>
                                             )}
                                         </Grid>
                                     </Box>
-                                    {/* PRODUCTS DATA */}
+
                                     <Box paddingY={5} paddingX={5} width={'100%'}>
                                         <Divider textAlign="left">Detalle de la compra</Divider>
                                     </Box>
@@ -211,7 +218,6 @@ const SingleOrderPage = () => {
                                         <Grid container>
                                             <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
                                                 {order.line_items.map((item, i) => {
-                                                    //console.log(item.product_data);
                                                     return (
                                                         <div key={i}>
                                                             <SingleProductDescription product={item} />

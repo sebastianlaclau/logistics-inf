@@ -1,3 +1,5 @@
+// LOGIN
+
 export async function login({ email, password }) {
     return await fetch('/api/auth/login', {
         method: 'POST',
@@ -47,6 +49,7 @@ export async function getOrders(
             console.log(err);
         });
 }
+
 
 export async function getOrder(id) {
     try {

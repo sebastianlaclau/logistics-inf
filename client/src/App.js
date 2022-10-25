@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+
 import { Routes, Route } from 'react-router-dom';
-import Login from './containers/Login';
+
+import Layout from './containers/Layout';
+import LoginPage from './containers/LoginPage';
 import OrdersListPage from './containers/OrdersListPage'
 import SingleOrderPage from './containers/SingleOrderPage';
-import Layout from './containers/Layout';
 
 function App() {
     const [isUserSignedIn, setIsUserSignedIn] = useState(false);
@@ -28,7 +30,6 @@ function App() {
                 <Routes>
                     <Route
                         path="/"
-                        /* element={<Homepage onLogout={onLogout} />} */
                         element={
                             <Layout isUserSignedIn={isUserSignedIn} onLogout={onLogout}>
                                 <OrdersListPage onLogout={onLogout} />
@@ -45,7 +46,7 @@ function App() {
                     />
                 </Routes>
             </>
-        )) || <Login onLoginSuccessful={onLoginSuccessful} />
+        )) || <LoginPage onLoginSuccessful={onLoginSuccessful} />
     );
 }
 
